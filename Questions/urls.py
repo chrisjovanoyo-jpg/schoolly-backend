@@ -1,19 +1,35 @@
 from django.urls import path
 
 from .views import (
+    MySavedQuestionsView,
     QuestionListCreateView,
     QuestionDetailView,
     AnswerListCreateView,
     AnswerDetailView,
     ExploreQuestionsView,
+    HelpfulQuestionView,
+    
 )
 
 
 urlpatterns = [
+
     path(
         "",
         QuestionListCreateView.as_view(),
         name="question-list-create"
+    ),
+
+    path(
+        "explore/",
+        ExploreQuestionsView.as_view(),
+        name="explore-questions"
+    ),
+
+    path(
+        "<int:question_id>/helpful/",
+        HelpfulQuestionView.as_view(),
+        name="helpful-question"
     ),
 
     path(
@@ -35,8 +51,8 @@ urlpatterns = [
     ),
 
     path(
-    "explore/",
-    ExploreQuestionsView.as_view(),
-    name="explore-questions"
-),
+        "saved/",
+        MySavedQuestionsView.as_view(),
+        name="my-saved-questions"
+    ),
 ]

@@ -46,3 +46,57 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text[:50]
+
+
+class Helpful(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="helpful_questions"
+    )
+
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name="helpfuls"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "question"],
+                name="unique_user_question_helpful"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} marked question {self.question.id} helpful"
+
+
+class SavedQuestion(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="saved_questions"
+    )
+
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name="saved_by"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "question"],
+                name="unique_user_question_save"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} saved question {self.question.id}"

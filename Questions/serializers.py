@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Question, Answer
+
+from .models import (
+    Question,
+    Answer,
+    Helpful,
+    SavedQuestion
+)
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -47,6 +53,15 @@ class QuestionSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    helpful_count = serializers.IntegerField(
+        source="helpfuls.count",
+        read_only=True
+    )
+
+    helpful = serializers.SerializerMethodField()
+
+    saved = serializers.SerializerMethodField()
+
     answers = AnswerSerializer(
         many=True,
         read_only=True
@@ -54,6 +69,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
+
         fields = [
             "id",
             "author_username",
@@ -62,6 +78,9 @@ class QuestionSerializer(serializers.ModelSerializer):
             "created_at",
             "views_count",
             "answers_count",
+            "helpful_count",
+            "helpful",
+            "saved",
             "answers",
         ]
 
@@ -72,5 +91,69 @@ class QuestionSerializer(serializers.ModelSerializer):
             "created_at",
             "views_count",
             "answers_count",
+            "helpful_count",
+            "helpful",
+            "saved",
             "answers",
+        ]
+
+    def get_helpful(self, obj):
+        request = self.context.get("request")
+
+        if not request or not request.user.is_authenticated:
+            return False
+
+        return obj.helpfuls.filter(
+            user=request.user
+        ).exists()
+
+    def get_saved(self, obj):
+        request = self.context.get("request")
+
+        if not request or not request.user.is_authenticated:
+            return False
+
+        return obj.saved_by.filter(
+            user=request.user
+        ).exists()
+    
+
+    
+class HelpfulSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Helpful
+
+        fields = [
+            "id",
+            "user",
+            "question",
+            "created_at",
+        ]
+
+        read_only_fields = [
+            "id",
+            "user",
+            "question",
+            "created_at",
+        ]
+
+
+class SavedQuestionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SavedQuestion
+
+        fields = [
+            "id",
+            "user",
+            "question",
+            "created_at",
+        ]
+
+        read_only_fields = [
+            "id",
+            "user",
+            "question",
+            "created_at",
         ]
