@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     #rest_framework
     'rest_framework',
     "rest_framework_simplejwt.token_blacklist",
+    'corsheaders',
 
     #apps
     'account',
@@ -60,6 +61,9 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = "account.User"
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+
+
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -71,6 +75,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'schoolly_backend.urls'
+
+#fr dev
+CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
     {
@@ -155,3 +162,9 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7)
 }
+
+
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
